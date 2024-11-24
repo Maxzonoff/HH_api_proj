@@ -16,10 +16,11 @@ class HeadHunterAPI(HeadHunterAPIBase):
         self.vacancies = []
 
     def get_vacancies(self, keyword):
-        #https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies
         self.params['text'] = keyword
         while self.params.get('page') != 20:
             response = requests.get(self.url, headers=self.headers, params=self.params)
             vacancies = response.json()['items']
             self.vacancies.extend(vacancies)
             self.params['page'] += 1
+
+# https://api.hh.ru/openapi/redoc#tag/Poisk-vakansij/operation/get-vacancies
