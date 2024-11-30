@@ -1,4 +1,5 @@
 import pytest
+
 from src import vacancy
 
 
@@ -6,53 +7,66 @@ def test_create_from_dict_missing_name_raises_error():
     data = {}
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ name'
+    assert str(e.value) == "Отсутствует ключ name"
 
 
 def test_create_from_dict_missing_url_raises_error():
-    data = {'name': 'test_name'}
+    data = {"name": "test_name"}
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ url'
+    assert str(e.value) == "Отсутствует ключ url"
 
 
 def test_create_from_dict_missing_salary_from_raises_error():
-    data = {'name': 'test_name',
-            'alternate_url': 'test_url',
-            }
+    data = {
+        "name": "test_name",
+        "alternate_url": "test_url",
+    }
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ salary_from'
+    assert str(e.value) == "Отсутствует ключ salary_from"
 
 
 def test_create_from_dict_missing_salary_to_raises_error():
-    data = {'name': 'test_name',
-            'alternate_url': 'test_url',
-            'salary_from': 'test_salary_from'
-            }
+    data = {
+        "name": "test_name",
+        "alternate_url": "test_url",
+        "salary_from": "test_salary_from",
+    }
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ salary_to'
+    assert str(e.value) == "Отсутствует ключ salary_to"
+
 
 def test_create_from_dict_missing_currency_raises_error():
-    data = {'name': 'test_name',
-            'alternate_url': 'test_url',
-            'salary_from': 'test_salary_from',
-            'salary_to': 'test_salary_to'
-            }
+    data = {
+        "name": "test_name",
+        "alternate_url": "test_url",
+        "salary_from": "test_salary_from",
+        "salary_to": "test_salary_to",
+    }
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ currency'
+    assert str(e.value) == "Отсутствует ключ currency"
+
 
 def test_create_from_dict_missing_responsibility_raises_error():
-    data = {'name': 'test_name',
-            'alternate_url': 'test_url',
-            'salary_from': 'test_salary_from',
-            'salary_to': 'test_salary_to',
-            'currency': 'test_currency'
-            }
+    data = {
+        "name": "test_name",
+        "alternate_url": "test_url",
+        "salary_from": "test_salary_from",
+        "salary_to": "test_salary_to",
+        "currency": "test_currency",
+    }
     with pytest.raises(vacancy.VacancyCreateException) as e:
         vacancy.Vacancy.create_from_dict(data)
-    assert str(e.value) == 'Отсутствует ключ responsibility'
+    assert str(e.value) == "Отсутствует ключ responsibility"
 
+def test_has_words():
+    v = vacancy.Vacancy(None, None, None, None, None, 'ab bm')
+    assert not v.has_words([])
+    assert not v.has_words(['qwerty', 'aba'])
+    assert v.has_words(['ab'])
+    assert v.has_words(['bm'])
+    assert v.has_words(['ab', 'bm'])
 

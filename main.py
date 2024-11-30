@@ -1,6 +1,22 @@
-from src import hh_api
-import json
+from src import vacancy, filters
 
-api = hh_api.HeadHunterAPI()
-api.get_vacancies('Python')
-print(json.dumps(api.vacancies[0], indent=2, ensure_ascii=False).encode('utf-8').decode())
+from src import hh_api
+
+
+def main():
+    api = hh_api.HeadHunterAPI()
+    search_query = input("Введите поисковый запрос: ")
+    api.get_vacancies(search_query)
+    search_words = input('Введите ключевые слова: ').split()
+    vacancies = vacancy.Vacancy.cast_to_object_list(api.vacancies)
+    vacancies = filters.filter_vacancies(vacancies, search_words)
+    vacancies.sort(reverse=True)
+    top_n = int(input('Введите количество вакансий по зарплате: '))
+    vacancies = filters.top_n(vacancies, top_n)
+    vacancies = list(map(str, vacancies))
+
+    print('\n***\n'.join(vacancies))
+
+
+if __name__ == '__main__':
+    main()
