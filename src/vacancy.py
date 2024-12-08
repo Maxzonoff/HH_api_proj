@@ -4,6 +4,7 @@ import re
 class Vacancy:
     def __init__(
             self,
+            pk: str,
             name: str,
             url: str,
             salary_from: int | None,
@@ -11,6 +12,7 @@ class Vacancy:
             currency: str | None,
             responsibility: str | None,
     ) -> None:
+        self.pk = pk
         self._name = name
         self._url = url
         self._salary_from = salary_from or 0
@@ -38,13 +40,19 @@ class Vacancy:
                 return True
         return False
 
-    def as_dict(self):
-        return {'name': self._name,
-
+    def to_dict(self):
+        return {'pk': self.pk,
+                'name': self._name,
+                'url': self._url,
+                'salary_from': self._salary_from,
+                'salary_to': self._salary_to,
+                'currency': self._currency,
+                'responsibility': self._responsibility,
                 }
 
     @classmethod
     def create_from_dict(cls, data: dict):
+        pk = data.get("id")
         name = data.get("name")
         url = data.get("alternate_url")
         salary_dict = data.get("salary") or {}
@@ -54,7 +62,7 @@ class Vacancy:
         snippet_dict = data.get("snippet") or {}
         responsibility = snippet_dict.get("responsibility")
 
-        return cls(name, url, salary_from, salary_to, currency, responsibility)
+        return cls(pk, name, url, salary_from, salary_to, currency, responsibility)
 
     @classmethod
     def cast_to_object_list(cls, data: list[dict]) -> list['Vacancy']:
@@ -63,6 +71,5 @@ class Vacancy:
             list_vacancy.append(cls.create_from_dict(vacancy_dict))
 
         return list_vacancy
-
 
 
