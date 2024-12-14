@@ -1,0 +1,19 @@
+[
+  {
+    "pk": "123",
+    "name": "name",
+    "url": "url",
+    "salary_from": 10,
+    "salary_to": 20,
+    "currency": "rub",
+    "responsibility": "qwerty"
+  }, {
+    "pk": "321",
+    "name": "name",
+    "url": "url",
+    "salary_from": 10,
+    "salary_to": 20,
+    "currency": "rub",
+    "responsibility": "qwerty"
+  }
+]
