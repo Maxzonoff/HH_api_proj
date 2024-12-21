@@ -2,6 +2,18 @@ import re
 
 
 class Vacancy:
+    """Класс для работы с вакансиями"""
+
+    __slots__ = (
+        "__pk",
+        "__name",
+        "__url",
+        "__salary_from",
+        "__salary_to",
+        "__currency",
+        "__responsibility",
+    )
+
     def __init__(
         self,
         pk: str,
@@ -12,49 +24,64 @@ class Vacancy:
         currency: str | None,
         responsibility: str | None,
     ) -> None:
-        self.pk = pk
-        self._name = name
-        self._url = url
-        self._salary_from = salary_from or 0
-        self._salary_to = salary_to or 0
-        self._currency = currency
-        self._responsibility = responsibility or ""
+        self.__pk = pk
+        self.__name = name
+        self.__url = url
+        self.__salary_from = self.__validate_salary(salary_from)
+        self.__salary_to = self.__validate_salary(salary_to)
+        self.__currency = currency
+        self.__responsibility = self.__validate_responsibility(responsibility)
+
+    @classmethod
+    def __validate_salary(cls, salary: int | None) -> int:
+        return salary or 0
+
+    @classmethod
+    def __validate_responsibility(cls, responsibility: str | None) -> str:
+        return responsibility or ""
+
+    @property
+    def pk(self):
+        return self.__pk
 
     def __str__(self):
         lines = [
-            f"Название вакансии: {self._name}",
-            f"Ссылка на вакансия: {self._url}",
-            f"Зарплата от: {self._salary_from}",
-            f"Зарплата до: {self._salary_to}",
-            f"Валюта: {self._currency}",
-            f"Описание вакансий: {self._responsibility}",
+            f"Название вакансии: {self.__name}",
+            f"Ссылка на вакансия: {self.__url}",
+            f"Зарплата от: {self.__salary_from}",
+            f"Зарплата до: {self.__salary_to}",
+            f"Валюта: {self.__currency}",
+            f"Описание вакансий: {self.__responsibility}",
         ]
         return "\n".join(lines)
 
     def __lt__(self, other):
-        return max(self._salary_from, self._salary_to) < max(
-            other._salary_from, other._salary_to
+        return max(self.__salary_from, self.__salary_to) < max(
+            other.__salary_from, other.__salary_to
         )
 
     def has_words(self, words: list[str]) -> bool:
+        """Проверяет есть ли заданные слова в описании"""
         for word in words:
-            if re.search(word, self._responsibility, flags=re.IGNORECASE):
+            if re.search(word, self.__responsibility, flags=re.IGNORECASE):
                 return True
         return False
 
     def to_dict(self):
+        """Преобразовывает вакансию в словарь"""
         return {
-            "pk": self.pk,
-            "name": self._name,
-            "url": self._url,
-            "salary_from": self._salary_from,
-            "salary_to": self._salary_to,
-            "currency": self._currency,
-            "responsibility": self._responsibility,
+            "pk": self.__pk,
+            "name": self.__name,
+            "url": self.__url,
+            "salary_from": self.__salary_from,
+            "salary_to": self.__salary_to,
+            "currency": self.__currency,
+            "responsibility": self.__responsibility,
         }
 
     @classmethod
     def from_dict(cls, data):
+        """Создает вакансию из словаря"""
         return cls(
             pk=data["pk"],
             name=data["name"],
@@ -67,9 +94,10 @@ class Vacancy:
 
     @classmethod
     def create_from_dict(cls, data: dict):
+        """Создает вакансию из словаря полученного из HH"""
         pk = str(data.get("id"))
         name = str(data.get("name"))
-        url = str(data.get("alternate_url"))
+        url = str(data.get("alternate__url"))
         salary_dict = data.get("salary") or {}
         salary_from = salary_dict.get("salary_from")
         salary_to = salary_dict.get("salary_to")
@@ -81,6 +109,7 @@ class Vacancy:
 
     @classmethod
     def cast_to_object_list(cls, data: list[dict]) -> list["Vacancy"]:
+        """Создает список вакансий из списка словарей HH"""
         list_vacancy = []
         for vacancy_dict in data:
             list_vacancy.append(cls.create_from_dict(vacancy_dict))
